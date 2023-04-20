@@ -5,8 +5,7 @@ SHELL := /bin/bash
 PRJ := $(PWD)
 COMMIT := $(shell git rev-parse HEAD)
 BIN = $(HOME)/bin
-BASHRCD = $(HOME)/bashrc.d
-POWERLINE = $(HOME)/.config/powerline
+ZSHRCD = $(HOME)/zshrc.d
 # OS = 'Darwin' or 'Linux'
 OS = $(shell uname -s)
 # get epoch seconds at the start of the make run
@@ -19,20 +18,13 @@ LNF = ln -vsf
 help: ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-nodejs: ## Install NodeJS
-	curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -;
-	sudo apt -y install nodejs
+nvm: ## Install NVM and NodeJS
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+	nvm install 14 --lts
+	
 
-spotify: ## Install spotify repo and package
-	curl -sS https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | sudo apt-key add - ;
-	echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list;
-	sudo apt-get update && sudo apt-get install -y spotify-client
-
-aws_cdk: nodejs ## Install AWS CDK
-	sudo npm install -g aws-cdk
-
-pyenv: ## install pyenv
-	-git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+conda: ## install conda
+	curl https://repo.anaconda.com/archive/Anaconda3-2023.03-Linux-x86_64.sh | bash
 
 awscli_v2: ## download and install awscliv2
 	-bash scripts/install_awscli_v2.sh
@@ -44,8 +36,6 @@ docker: ## install docker
 
 packer: ## install docker
 	bash scripts/install_packer.sh
-
-slack: ## install slack
 
 bin: ## create and configure $HOME/bin
 	$(MKDIR) $(HOME)/bin
@@ -67,14 +57,6 @@ $(HOME)/projects: ## make sure $HOME/tmp
 	$(MKDIR) $(HOME)/projects
 
 home: bin $(HOME)/tmp $(HOME)/projects ## configure home directory
-
-powerline: ## install and configure powerline
-	pip3 install --user powerline-status
-	pip3 install --user powerline-gitstatus
-	$(MKDIR) $(POWERLINE)/colorschemes
-	$(MKDIR) $(POWERLINE)/themes/shell
-	$(LN) $(PRJ)/powerline/colorschemes_default.json  $(POWERLINE)/colorschemes/default.json
-	$(LN) $(PRJ)/powerline/themes_shell_default.json  $(POWERLINE)/themes/shell/default.json
 
 bash: ## configure bash environment
 	$(MKDIR) $(BASHRCD)
@@ -127,6 +109,7 @@ shellcheck: ## shellcheck project files. skip ohmyzsh_git_aliases.sh file
 packages: ## install required packages
     # dconf/uuid for gogh colors
 	sudo apt-get install -y \
+	zsh \
 	curl \
 	git \
 	tree \
@@ -164,17 +147,10 @@ packages: ## install required packages
 	software-properties-common \
 	gnupg \
 	lsb-release \
-	python3.8-venv \
-	postgresql-client;
+	python3-pip;
 
 vscode: ## install vscode
 	bash scripts/install_vscode.sh
-
-neovim: ## install neovim
-	bash scripts/install_neovim.sh
-	mkdir -p $(HOME)/.config/nvim
-	-rm $(HOME)/.config/nvim/init.vim
-	$(LN) $(PRJ)/neovim/init.vim $(HOME)/.config/nvim/init.vim
 
 lazygit: ## install lazygit
 	bash scripts/install_lazygit.sh
@@ -190,16 +166,12 @@ rm-gpg: ## cleanup gpg scripts before replacing
 	-rm -f $(BIN)/encrypt
 	-rm -f $(BIN)/decrypt
 
-rm-powerline: ## remove the powerline files before replacing
-	-rm -f $(POWERLINE)/colorschemes/default.json
-	-rm -f $(POWERLINE)/themes/shell/default.json
-
 rm-ssh-config: ## remove gitconfig before replacing
 	-rm -f $(HOME)/.ssh/config
 
 rm-gitconfig: ## remove gitconfig before replacing
 	-rm -f $(HOME)/.gitconfig
 
-remove-all: rm-bash rm-gpg rm-powerline rm-ssh-config rm-gitconfig ## destroy everything you love
+remove-all: rm-bash rm-gpg rm-ssh-config rm-gitconfig ## destroy everything you love
 
 all: packages gpg powerline bash gitconfig ssh-config ## configure everything
