@@ -110,6 +110,7 @@ qemu-kvm: ## install and config qemu-kvm
     sudo apt install qemu qemu-kvm virt-manager bridge-utils
     sudo useradd -g $USER libvirt
     sudo useradd -g $USER libvirt-kvm
+    sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
 
 packages: ## install required packages
     # dconf/uuid for gogh colors
