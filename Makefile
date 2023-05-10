@@ -87,12 +87,6 @@ bash: ## configure bash environment
 gitconfig: ## deploy user gitconfig
 	$(LN) $(PRJ)/gitconfig $(HOME)/.gitconfig
 
-gpg: home ## download gpg scripts
-	curl --silent -o $(BIN)/encrypt https://raw.githubusercontent.com/natemarks/pipeline-scripts/main/scripts/encrypt
-	curl --silent -o $(BIN)/decrypt https://raw.githubusercontent.com/natemarks/pipeline-scripts/main/scripts/decrypt
-	chmod 755 $(BIN)/encrypt
-	chmod 755 $(BIN)/decrypt
-
 stayback: ## configure stayback
 	$(MKDIR) $(HOME)/.stayback
 	$(HOME)/bin/decrypt $(PWD)/stayback.json.gpg
@@ -106,11 +100,12 @@ shellcheck: ## shellcheck project files. skip ohmyzsh_git_aliases.sh file
 	shellcheck --format=gcc bin/encrypt
 	shellcheck --format=gcc bin/decrypt
 	
-qemu-kvm: ## install and config qemu-kvm
-    sudo apt install qemu qemu-kvm virt-manager bridge-utils
-    sudo useradd -g $USER libvirt
-    sudo useradd -g $USER libvirt-kvm
-    sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
+qemu_kvm:
+	sudo apt install -y qemu qemu-kvm virt-manager bridge-utils
+	sudo useradd -g $USER libvirt
+	sudo useradd -g $USER libvirt-kvm
+	sudo systemctl enable libvirtd.service && sudo systemctl start libvirtd.service
+	echo "In order for Virtual Machine Manager to be usable, you need to log out and back in so group changes take effect"
 
 packages: ## install required packages
     # dconf/uuid for gogh colors
@@ -180,4 +175,4 @@ rm-gitconfig: ## remove gitconfig before replacing
 
 remove-all: rm-bash rm-gpg rm-ssh-config rm-gitconfig ## destroy everything you love
 
-all: packages gpg powerline bash gitconfig ssh-config ## configure everything
+all: packages gpg bash gitconfig ssh-config ## configure everything
