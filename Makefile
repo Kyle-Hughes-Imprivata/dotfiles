@@ -105,6 +105,11 @@ shellcheck: ## shellcheck project files. skip ohmyzsh_git_aliases.sh file
 	find . -type f -name "*.sh" ! -name 'ohmyzsh_git_aliases.sh' -exec "shellcheck" "--format=gcc" {} \;
 	shellcheck --format=gcc bin/encrypt
 	shellcheck --format=gcc bin/decrypt
+	
+qemu-kvm: ## install and config qemu-kvm
+    sudo apt install qemu qemu-kvm virt-manager bridge-utils
+    sudo useradd -g $USER libvirt
+    sudo useradd -g $USER libvirt-kvm
 
 packages: ## install required packages
     # dconf/uuid for gogh colors
