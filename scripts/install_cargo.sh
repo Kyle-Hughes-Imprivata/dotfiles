@@ -1,7 +1,5 @@
 #!/usr/local/env bash
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
 cargo install \
       alacritty \
       bat \
@@ -9,9 +7,10 @@ cargo install \
       cargo-binstall \
       dust \
       exa \
-      nu \
+      git-delta \
       pastel \
       procs \
+      sad \
       sd \
       tokei \
       zoxide

@@ -18,6 +18,10 @@ LNF = ln -vsf
 help: ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+kitty: ## Install kitty terminal and Linux desktop integration
+	bash scripts/install_kitty.sh
+
+
 nvm: ## Install NVM and NodeJS
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 	nvm install 14 --lts
@@ -148,6 +152,7 @@ packages: ## install required packages
 	software-properties-common \
 	gnupg \
 	lsb-release \
+	fzf \
 	python3-pip;
 
 vscode: ## install vscode
@@ -155,6 +160,9 @@ vscode: ## install vscode
 
 lazygit: ## install lazygit
 	bash scripts/install_lazygit.sh
+
+rust: ## install rustup, rustc and cargo
+	bash scripts/install_rust.sh
 
 ssh-config: ## ssh config
 	$(LN) $(PRJ)/ssh/config  $(HOME)/.ssh/config
